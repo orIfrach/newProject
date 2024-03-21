@@ -61,7 +61,7 @@ const SignupForm = () => {
         showPopup("emaill is incorrect");
         return;
       }
-      //username & password check
+      //password check
       if(formData.password.length < 4){
         showPopup("password must be higher then 4 digits")
         return

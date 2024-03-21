@@ -1,5 +1,4 @@
 const cors = require('cors');
-const axios = require('axios');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
@@ -63,6 +62,24 @@ app.post('/api/login', async (req, res) => {
       res.status(500).json({ success: false, message: 'An error occurred' });
     }
   });
+
+  
+// Adding a new endpoint to check if a email already exists
+app.get('/api/check-user', async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    // Check if the email already exists in the database
+    const query = 'SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)';
+    const result = await pool.query(query, [email]);
+    const exists = result.rows[0].exists;
+
+    res.json({ exists });
+  } catch (error) {
+    console.error('Error checking user:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
   // Start the server
 const port = process.env.PORT || 5000; 
