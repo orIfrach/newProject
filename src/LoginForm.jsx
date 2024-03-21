@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate } from "react-router-dom";
 import "./LoginForm.css";
 import axios from "axios"; 
 
@@ -8,6 +8,7 @@ const LoginForm = ({ }) => {
   const [popupStyle, setPopupStyle] = useState("hide");
   const [popupMessage, setPopupMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const navigate = useNavigate();
 
   //function to show the password
@@ -28,10 +29,11 @@ const LoginForm = ({ }) => {
   };
 
   const handleLogin = async () => {
-    const username = document.querySelector('[name="email"]').value;
+    const email = document.querySelector('[name="email"]').value;
     const password = document.querySelector('[name="password"]').value;
 
     // Send the login data to the backend for authentication
+
     try {
       const response = await axios.post("/api/login", { email, password });
       if (response.data.success) {
@@ -45,7 +47,7 @@ const LoginForm = ({ }) => {
       }
     } catch (error) {
       console.error("Error during login:", error);
-      showPopup("Username or password are incorrect");
+      showPopup("email or password are incorrect");
     }
   };
 
@@ -65,6 +67,9 @@ const LoginForm = ({ }) => {
       </div>
       <div className="login-text">
       </div>
+      <p>
+          Need to create an account? <Link to="/SignupForm">Sign Up</Link>
+        </p>
       <div className={popupStyle}>
         <h3>Login Status</h3>
         <p>{popupMessage}</p>

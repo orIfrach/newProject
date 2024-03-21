@@ -3,8 +3,6 @@ const axios = require('axios');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
-const fetch = require('node-fetch');
-const { v4: uuidv4 } = require('uuid');
 
 
 const app = express();
@@ -17,7 +15,7 @@ process.on('uncaughtException', function (err) {
 app.use(cors());
 app.use(bodyParser.json());
 
-
+// PostgreSQL database connection
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
@@ -27,18 +25,16 @@ const pool = new Pool({
   });
 
   app.post('/api/signup', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { email, password } = req.body;
   
     try {
       if (!email || !password) {
         return res.status(400).json({ message: 'Please fill in all fields' });
       }
   
-      const person_uid = uuidv4(); // Generate a new UUID for the person
-  
-      // Insert user into the User table
-      const registeredUserQuery = 'INSERT INTO User (email, Password, RegistrationDate) VALUES ($1, $2,NOW())';
-      await pool.query(registeredUserQuery, [person_uid, username, password,email]);
+      // Insert user into the Users table
+      const usersQuery = 'INSERT INTO users (email, password) VALUES ($1, $2)';
+      await pool.query(usersQuery, [email, password]);
   
       res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
@@ -50,11 +46,11 @@ const pool = new Pool({
 
   // Checking for user login credentials
 app.post('/api/login', async (req, res) => {
-    const { email, password } = req.body;
+    const {email, password } = req.body;
   
     try {
-      // Check if the username and password match a registered user
-      const query = 'SELECT * FROM Users WHERE email = $1 AND Password = $2';
+      // Check if the email and password match a user
+      const query = 'SELECT * FROM users WHERE email = $1 AND password = $2';
       const result = await pool.query(query, [email, password]);
   
       if (result.rowCount === 1) {
