@@ -44,24 +44,26 @@ const pool = new Pool({
   
 
   // Checking for user login credentials
-app.post('/api/login', async (req, res) => {
-    const {email, password } = req.body;
-  
+  app.post('/api/login', async (req, res) => {
+    const { email, password, otp } = req.body;
+
     try {
-      // Check if the email and password match a user
-      const query = 'SELECT * FROM users WHERE email = $1 AND password = $2';
-      const result = await pool.query(query, [email, password]);
-  
-      if (result.rowCount === 1) {
-        res.status(200).json({ success: true, message: 'Login successful' });
-      } else {
-        res.status(401).json({ success: false, message: 'Incorrect username or password' });
-      }
+        // Verify the OTP along with email and password
+        // Implement a function to verify OTP
+        const isOTPVerified = verifyOTP(email, otp);
+
+        if (isOTPVerified) {
+            // Proceed with login
+            // ...
+            res.status(200).json({ success: true, message: 'Login successful' });
+        } else {
+            res.status(401).json({ success: false, message: 'Incorrect OTP' });
+        }
     } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ success: false, message: 'An error occurred' });
+        console.error('Error during login:', error);
+        res.status(500).json({ success: false, message: 'An error occurred' });
     }
-  });
+});
 
   
 // Adding a new endpoint to check if a email already exists
@@ -81,8 +83,26 @@ app.get('/api/check-user', async (req, res) => {
   }
 });
 
+app.post('/api/send-otp', async (req, res) => {
+  const { email } = req.body;
+  const otp = generateOTP(); // Implement a function to generate OTP
+
+  try {
+      // Send the OTP to the user's email (you may use a library like Nodemailer for this)
+      // Example: sendEmail(email, 'OTP for Login', `Your OTP is: ${otp}`);
+      
+      // Store the OTP in a temporary storage (e.g., Redis) along with the user's email for verification
+      
+      res.status(200).json({ message: 'OTP sent successfully' });
+  } catch (error) {
+      console.error('Error sending OTP:', error);
+      res.status(500).json({ message: 'Failed to send OTP' });
+  }
+});
+
   // Start the server
-const port = process.env.PORT || 5000; 
+const port = process.env.PORT || 3000; 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+

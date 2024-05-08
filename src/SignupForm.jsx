@@ -64,7 +64,7 @@ const SignupForm = () => {
       //password check
       if(formData.password.length < 4){
         showPopup("password must be higher then 4 digits")
-        return
+        return;
       }
 
   

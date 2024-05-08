@@ -4,6 +4,7 @@ import LoginForm from "./LoginForm";
 import ErrorPage from "./ErrorPage"
 import NavBar from './NavBar';
 import SignupForm from './SignupForm';
+import HomePage from './HomePage';
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -20,7 +21,7 @@ function App() {
     <NavBar loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser} />
       <Routes>
           <Route path="/LoginForm" element={<LoginForm setLoggedInUser={setLoggedInUser} />} />
-          <Route path="/" element ={<LoginForm/>} />
+          <Route path="/" element ={<HomePage/>} />
           <Route path="/SignupForm" element={<SignupForm/>} />
           <Route path="*" element={<ErrorPage/>} />
       </Routes>
